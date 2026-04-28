@@ -1,0 +1,1061 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Михаил и Дина | PM-International</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           CSS VARIABLES
+           ============================================ */
+        :root {
+            --color-bg: #0D0D0D;
+            --color-bg-secondary: #161616;
+            --color-bg-card: #1E1E1E;
+            --color-text-primary: #FFFFFF;
+            --color-text-secondary: #A0A0A0;
+            --color-text-muted: #666666;
+            --color-accent: #E8C547;
+            --color-accent-hover: #F5D76E;
+            --color-gradient-start: #E8C547;
+            --color-gradient-end: #C9A962;
+            
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Inter', Arial, sans-serif;
+            
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 2rem;
+            --space-lg: 4rem;
+            --space-xl: 6rem;
+            
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            
+            --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ============================================
+           BASE STYLES
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            font-weight: 400;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           TYPOGRAPHY
+           ============================================ */
+        h1, h2, h3, h4 {
+            font-family: var(--font-display);
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 7vw, 5rem);
+        }
+
+        h2 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+        }
+
+        h3 {
+            font-size: clamp(1.25rem, 2vw, 1.75rem);
+        }
+
+        p {
+            font-size: 1rem;
+            color: var(--color-text-secondary);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ============================================
+           UTILITY CLASSES
+           ============================================ */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+
+        .section {
+            padding: var(--space-xl) 0;
+            position: relative;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity var(--transition-smooth), transform var(--transition-smooth);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-in-delay-1 { transition-delay: 0.1s; }
+        .fade-in-delay-2 { transition-delay: 0.2s; }
+        .fade-in-delay-3 { transition-delay: 0.3s; }
+        .fade-in-delay-4 { transition-delay: 0.4s; }
+
+        /* ============================================
+           NAVIGATION
+           ============================================ */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: var(--space-sm) 0;
+            background: rgba(13, 13, 13, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav__content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav__logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--color-text-primary);
+        }
+
+        .nav__logo span {
+            color: var(--color-accent);
+        }
+
+        .nav__links {
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        .nav__link {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            transition: color var(--transition-smooth);
+            position: relative;
+        }
+
+        .nav__link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--color-accent);
+            transition: width var(--transition-smooth);
+        }
+
+        .nav__link:hover {
+            color: var(--color-text-primary);
+        }
+
+        .nav__link:hover::after {
+            width: 100%;
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            right: -20%;
+            top: 0;
+            width: 60%;
+            height: 100%;
+            background: radial-gradient(ellipse, rgba(232, 197, 71, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero__content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+            align-items: center;
+        }
+
+        .hero__text {
+            z-index: 2;
+        }
+
+        .hero__badge {
+            display: inline-block;
+            padding: var(--space-xs) var(--space-sm);
+            background: rgba(232, 197, 71, 0.1);
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--color-accent);
+            margin-bottom: var(--space-md);
+        }
+
+        .hero__title {
+            margin-bottom: var(--space-md);
+        }
+
+        .hero__description {
+            font-size: 1.125rem;
+            max-width: 500px;
+            margin-bottom: var(--space-lg);
+            line-height: 1.8;
+        }
+
+        .hero__cta {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            background: linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end));
+            color: var(--color-bg);
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-smooth);
+            box-shadow: 0 4px 20px rgba(232, 197, 71, 0.3);
+        }
+
+        .hero__cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(232, 197, 71, 0.4);
+        }
+
+        .hero__cta svg {
+            transition: transform var(--transition-smooth);
+        }
+
+        .hero__cta:hover svg {
+            transform: translateX(4px);
+        }
+
+        .hero__images {
+            position: relative;
+            height: 600px;
+        }
+
+        .hero__image-main {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 85%;
+            height: 85%;
+            object-fit: cover;
+            border-radius: var(--radius-lg);
+            z-index: 2;
+        }
+
+        .hero__image-secondary {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50%;
+            height: 50%;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            z-index: 3;
+            border: 3px solid var(--color-bg);
+        }
+
+        .hero__image-frame {
+            position: absolute;
+            top: 10%;
+            right: 5%;
+            width: 85%;
+            height: 85%;
+            border: 2px solid var(--color-accent);
+            border-radius: var(--radius-lg);
+            z-index: 1;
+        }
+
+        /* ============================================
+           LOGOS SECTION
+           ============================================ */
+        .logos {
+            padding: var(--space-lg) 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logos__grid {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            flex-wrap: wrap;
+        }
+
+        .logos__item {
+            max-width: 160px;
+            opacity: 1;
+            transition: opacity var(--transition-smooth);
+        }
+
+        .logos__item:hover {
+            opacity: 1;
+        }
+
+        .logos__item img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            filter: grayscale(0%) brightness(1);
+            transition: filter var(--transition-smooth);
+        }
+
+        .logos__item:hover img {
+            filter: grayscale(0%) brightness(1);
+        }
+
+        /* ============================================
+           ABOUT SECTION
+           ============================================ */
+        .about {
+            background: var(--color-bg-secondary);
+        }
+
+        .about__header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto var(--space-xl);
+        }
+
+        .about__header h2 {
+            margin-bottom: var(--space-sm);
+        }
+
+        .about__header p {
+            font-size: 1.125rem;
+        }
+
+        .about__grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+        }
+
+        .about__card {
+            background: var(--color-bg-card);
+            padding: var(--space-lg);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about__card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--color-gradient-start), var(--color-gradient-end));
+            transform: scaleX(0);
+            transition: transform var(--transition-smooth);
+        }
+
+        .about__card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(232, 197, 71, 0.3);
+        }
+
+        .about__card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .about__card-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(232, 197, 71, 0.1);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-md);
+            color: var(--color-accent);
+        }
+
+        .about__card-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .about__card h3 {
+            margin-bottom: var(--space-sm);
+            color: var(--color-text-primary);
+        }
+
+        .about__card p {
+            margin-bottom: var(--space-md);
+            font-size: 0.95rem;
+        }
+
+        .about__card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            color: var(--color-accent);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: gap var(--transition-smooth);
+        }
+
+        .about__card-link:hover {
+            gap: var(--space-sm);
+        }
+
+        .about__card-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ============================================
+           FAMILY SECTION
+           ============================================ */
+        .family {
+            position: relative;
+        }
+
+        .family::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            width: 40%;
+            height: 60%;
+            background: radial-gradient(ellipse, rgba(232, 197, 71, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .family__content {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: var(--space-xl);
+            align-items: center;
+        }
+
+        .family__images {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: var(--space-sm);
+            height: 550px;
+        }
+
+        .family__image-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius-md);
+        }
+
+        .family__image-wrapper--main {
+            grid-row: 1 / 3;
+            height: 100%;
+        }
+
+        .family__image-wrapper--small {
+            height: 100%;
+        }
+
+        .family__image-wrapper--mikhail {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .family__image-wrapper--dina {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .family__image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .family__image-wrapper:hover .family__image {
+            transform: scale(1.05);
+        }
+
+        .family__text h2 {
+            margin-bottom: var(--space-md);
+        }
+
+        .family__text p {
+            margin-bottom: var(--space-md);
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .family__quote {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-style: italic;
+            color: var(--color-text-primary);
+            padding: var(--space-md);
+            border-left: 3px solid var(--color-accent);
+            margin: var(--space-lg) 0;
+            background: rgba(232, 197, 71, 0.05);
+        }
+
+        /* ============================================
+           SOCIAL SECTION
+           ============================================ */
+        .social {
+            background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg) 100%);
+            padding: var(--space-xl) 0;
+        }
+
+        .social__header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .social__header h2 {
+            margin-bottom: var(--space-sm);
+        }
+
+        .social__grid {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            flex-wrap: wrap;
+        }
+
+        .social__person {
+            text-align: center;
+            background: var(--color-bg-card);
+            padding: var(--space-lg);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            min-width: 250px;
+        }
+
+        .social__avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: var(--space-sm);
+            border: 2px solid var(--color-accent);
+        }
+
+        .social__name {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            margin-bottom: var(--space-sm);
+            color: var(--color-accent);
+        }
+
+        .social__links {
+            display: flex;
+            gap: var(--space-sm);
+            justify-content: center;
+            margin-top: var(--space-sm);
+        }
+
+        .social__link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-secondary);
+            transition: all var(--transition-smooth);
+        }
+
+        .social__link:hover {
+            background: var(--color-accent);
+            color: var(--color-bg);
+            transform: translateY(-3px);
+        }
+
+        .social__link svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            padding: var(--space-md) 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer p {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 1024px) {
+            .hero__content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero__description {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero__images {
+                height: 400px;
+                order: -1;
+            }
+
+            .about__grid {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+
+            .family__content {
+                grid-template-columns: 1fr;
+            }
+
+            .family__images {
+                height: 350px;
+                order: -1;
+            }
+
+            .family__image-wrapper--mikhail,
+            .family__image-wrapper--dina {
+                display: none;
+            }
+
+            .family__image-wrapper--main {
+                grid-row: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --space-xl: 4rem;
+                --space-lg: 3rem;
+            }
+
+            .nav__links {
+                display: none;
+            }
+
+            .hero__images {
+                height: 300px;
+            }
+
+            .hero__image-main {
+                width: 100%;
+                border-radius: var(--radius-md);
+            }
+
+            .hero__image-secondary,
+            .hero__image-frame {
+                display: none;
+            }
+
+            .logos__grid {
+                gap: var(--space-lg);
+            }
+
+            .logos__item {
+                max-width: 120px;
+            }
+
+            .family__quote {
+                font-size: 1.2rem;
+            }
+
+            .social__grid {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .social__person {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .hero__cta {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .about__card {
+                padding: var(--space-md);
+            }
+
+            .family__text h2 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================
+         NAVIGATION
+         ============================================ -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav__content">
+                <a href="#" class="nav__logo">Михаил <span>&</span> Дина Шкребко</a>
+                <div class="nav__links">
+                    <a href="#about" class="nav__link">О нас</a>
+                    <a href="#business" class="nav__link">Бизнес</a>
+                    <a href="#family" class="nav__link">История</a>
+                    <a href="#contact" class="nav__link">Контакты</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================
+         HERO SECTION
+         ============================================ -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero__content">
+                <div class="hero__text">
+                    <div class="hero__badge fade-in">
+                        PM-International Partner
+                    </div>
+                    <h1 class="hero__title fade-in fade-in-delay-1">
+                        Строим <span class="gradient-text">будущее</span> вместе
+                    </h1>
+                    <p class="hero__description fade-in fade-in-delay-2">
+                        Семейная команда, которая создаёт возможности для здорового образа жизни и финансовой независимости
+                    </p>
+                    <a href="https://www.pmebusiness.com/registrationv2?TP=22001398" class="hero__cta fade-in fade-in-delay-3" target="_blank" rel="noopener">
+                        Стать партнёром
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+                <div class="hero__images">
+                    <img src="IMG_6170.JPG" alt="Наша семья" class="hero__image-main fade-in fade-in-delay-2">
+                    <img src="1777374099302.JPG" alt="Михаил и Дина" class="hero__image-secondary fade-in fade-in-delay-3">
+                    <div class="hero__image-frame fade-in fade-in-delay-4"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         LOGOS SECTION
+         ============================================ -->
+    <section class="logos">
+        <div class="container">
+            <div class="logos__grid">
+                <div class="logos__item">
+                    <img src="Fit line LOGO.png" alt="FitLine">
+                </div>
+                <div class="logos__item">
+                    <img src="PM Logo.png" alt="PM-International">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         ABOUT SECTION
+         ============================================ -->
+    <section class="about section" id="about">
+        <div class="container">
+            <div class="about__header fade-in">
+                <h2>Что мы <span class="gradient-text">предлагаем</span></h2>
+                <p>Мы занимаемся тем, что вдохновляем людей и создаём ценности, которые остаются навсегда</p>
+            </div>
+            
+            <div class="about__grid">
+                <!-- Карточка 1: Бизнес -->
+                <div class="about__card fade-in fade-in-delay-1" id="business">
+                    <div class="about__card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                    </div>
+                    <h3>Бизнес</h3>
+                    <p>Возможность зарабатывать из любой точки мира вместе с PM-International. Гибкий график и пассивный доход.</p>
+                    <a href="https://www.pmebusiness.com/registrationv2?TP=22001398" class="about__card-link" target="_blank" rel="noopener">
+                        Стать партнёром
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Карточка 2: Продукт -->
+                <div class="about__card fade-in fade-in-delay-2">
+                    <div class="about__card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+                            <line x1="6" y1="1" x2="6" y2="4"/>
+                            <line x1="10" y1="1" x2="10" y2="4"/>
+                            <line x1="14" y1="1" x2="14" y2="4"/>
+                        </svg>
+                    </div>
+                    <h3>Продукт</h3>
+                    <p>Полный ассортимент продуктов для здоровья, фитнеса и красоты от бренда FitLine. Немецкое качество.</p>
+                    <a href="https://www.fitline.com/?sponsor=22001398" class="about__card-link" target="_blank" rel="noopener">
+                        Смотреть продукцию
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Карточка 3: Поддержка -->
+                <div class="about__card fade-in fade-in-delay-3">
+                    <div class="about__card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h3>Поддержка</h3>
+                    <p>Вас поддержит сплочённая команда партнёров. Поможем освоить ключевые навыки и выстроить устойчивую бизнес-модель.</p>
+                    <a href="#contact" class="about__card-link">
+                        Связаться с нами
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         FAMILY SECTION
+         ============================================ -->
+    <section class="family section" id="family">
+        <div class="container">
+            <div class="family__content">
+                <div class="family__images">
+                    <div class="family__image-wrapper family__image-wrapper--main">
+                        <img src="Final photo.JPG" alt="Наша семья" class="family__image">
+                    </div>
+                    <div class="family__image-wrapper family__image-wrapper--small family__image-wrapper--mikhail">
+                        <img src="1777374099281.JPG" alt="Михаил" class="family__image">
+                    </div>
+                    <div class="family__image-wrapper family__image-wrapper--small family__image-wrapper--dina">
+                        <img src="1777374099291.JPG" alt="Дина" class="family__image">
+                    </div>
+                </div>
+                <div class="family__text">
+                    <h2 class="fade-in">Наша <span class="gradient-text">история</span></h2>
+                    <p class="fade-in fade-in-delay-1">
+                        С 2009 года наша семья шаг за шагом строила своё дело — занимались оптовой продажей продуктов питания. Это был классический бизнес, который научил нас главному: упорству, командной работе и вере в собственные силы. Каждый день мы вкладывали душу в своё дело, росли и набирались опыта.
+                    </p>
+                    <p class="fade-in fade-in-delay-3">
+                        <!-- === ТЕКСТ О СЕМЬЕ (абзац 2) === -->
+                        В 2012 году, не останавливаясь на достигнутом, мы открыли для себя новый горизонт — начали развивать сетевой бизнес с компанией Amway. Это добавило в нашу жизнь динамики, расширило круг общения и показало, что возможности безграничны, если идти вперёд.
+                    </p>
+                    <p class="fade-in fade-in-delay-4">
+			2020 год принёс перемены: пришлось закрыть оптовый бизнес. А в 2022‑м Amway покинула рынок РФ. Но мы не опустили руки — ведь трудности лишь проверяют нас на прочность. Мы восприняли это как знак: пришло время нового старта.
+       		    </p>
+                    <p class="fade-in fade-in-delay-5">	 	    
+			И вот мы нашли то, что откликается нашим ценностям и стремлениям, — международную компанию PM‑International. Здесь мы видим реальные перспективы, поддержку и шанс построить бизнес, который будет работать на нас.
+       		    </p>
+                    <p class="fade-in fade-in-delay-6">	
+			Хотите идти с нами? Присоединяйтесь к нашей команде в построении бизнеса с PM‑International — вместе мы создадим что‑то по‑настоящему великое!
+		    </p>
+                    <blockquote class="family__quote fade-in fade-in-delay-6">
+                        "Наш бизнес — это не просто работа, это наш образ жизни и способ делиться тем, что мы любим, с другими людьми"
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         SOCIAL SECTION
+         ============================================ -->
+    <section class="social" id="contact">
+        <div class="container">
+            <div class="social__header">
+                <h2>Свяжитесь с <span class="gradient-text">нами</span></h2>
+                <p>Мы всегда рады новым знакомствам и партнёрам</p>
+            </div>
+            <div class="social__grid">
+                <!-- Михаил -->
+                <div class="social__person fade-in fade-in-delay-1">
+                    <img src="Михаил.JPG" alt="Михаил" class="social__avatar">
+                    <p class="social__name">Михаил</p>
+                    <div class="social__links">
+                        <a href="https://instagram.com/Mikhail_shk" class="social__link" target="_blank" rel="noopener" aria-label="Instagram">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                            </svg>
+                        </a>
+                        <a href="https://t.me/Mikhail_shk" class="social__link" target="_blank" rel="noopener" aria-label="Telegram">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Дина -->
+                <div class="social__person fade-in fade-in-delay-2">
+                    <img src="Дина.JPG" alt="Дина" class="social__avatar">
+                    <p class="social__name">Дина</p>
+                    <div class="social__links">
+                        <a href="https://instagram.com/Dina_Shkrebko" class="social__link" target="_blank" rel="noopener" aria-label="Instagram">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                            </svg>
+                        </a>
+                        <a href="https://t.me/Dina_shkrebko" class="social__link" target="_blank" rel="noopener" aria-label="Telegram">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         FOOTER
+         ============================================ -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 Михаил и Дина Шкребко. Все права защищены.
+	   <p>Социальная сеть Instagram принадлежит компании Meta Platforms Inc., деятельность которой признана экстремистской и запрещена на территории Российской Федерации. Ссылка размещена исключительно для информационных целей и не является рекламой или призывом к использованию ресурса.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ============================================
+         JAVASCRIPT
+         ============================================ -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Анимация появления при скролле
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            fadeElements.forEach(el => observer.observe(el));
+
+            // Плавный скролл для якорных ссылок
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Параллакс эффект для изображений
+            const imageWrappers = document.querySelectorAll('.hero__images, .family__images');
+            
+            window.addEventListener('scroll', function() {
+                const scrollY = window.pageYOffset;
+                
+                imageWrappers.forEach(wrapper => {
+                    const rect = wrapper.getBoundingClientRect();
+                    const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+                    
+                    if (isVisible) {
+                        const offset = (scrollY - wrapper.offsetTop) * 0.05;
+                        wrapper.style.transform = `translateY(${offset * 0.1}px)`;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
