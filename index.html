@@ -1,9 +1,24 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Михаил и Дина | PM-International</title>
+
+    <!-- ============================================
+         GOOGLE ANALYTICS 4 — G-WHS9237YHD
+         ============================================ -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WHS9237YHD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-WHS9237YHD', {
+            page_title: document.title,
+            page_location: window.location.href
+        });
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1001,61 +1016,297 @@
     </footer>
 
     <!-- ============================================
+         ANALYTICS DASHBOARD (hidden, password protected)
+         ============================================ -->
+    <div id="analytics-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:9999; overflow-y:auto; padding:2rem;">
+        <div style="max-width:900px; margin:0 auto; font-family:'Inter',sans-serif;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+                <h2 style="font-family:'Playfair Display',serif; font-size:2rem; color:#E8C547;">📊 Аналитика сайта</h2>
+                <button onclick="closeAnalytics()" style="background:rgba(255,255,255,0.1); border:none; color:#fff; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-size:0.9rem;">✕ Закрыть</button>
+            </div>
+
+            <!-- Visits summary -->
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:2rem;" id="stats-summary"></div>
+
+            <!-- Links table -->
+            <div style="background:#1E1E1E; border-radius:16px; padding:1.5rem; border:1px solid rgba(255,255,255,0.07); margin-bottom:1.5rem;">
+                <h3 style="color:#E8C547; margin-bottom:1.2rem; font-family:'Playfair Display',serif;">Переходы по ссылкам</h3>
+                <div id="links-table"></div>
+            </div>
+
+            <!-- Daily visits chart -->
+            <div style="background:#1E1E1E; border-radius:16px; padding:1.5rem; border:1px solid rgba(255,255,255,0.07); margin-bottom:1.5rem;">
+                <h3 style="color:#E8C547; margin-bottom:1.2rem; font-family:'Playfair Display',serif;">Посещения по дням</h3>
+                <div id="daily-chart" style="overflow-x:auto;"></div>
+            </div>
+
+            <div style="text-align:center; margin-top:1.5rem;">
+                <button onclick="if(confirm('Сбросить всю аналитику?')){resetAnalytics()}" style="background:rgba(255,80,80,0.15); border:1px solid rgba(255,80,80,0.3); color:#ff6060; padding:0.5rem 1.2rem; border-radius:8px; cursor:pointer; font-size:0.85rem;">🗑 Сбросить данные</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
          JAVASCRIPT
          ============================================ -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Анимация появления при скролле
-            const fadeElements = document.querySelectorAll('.fade-in');
-            
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1
-            };
+    // ============================================
+    // ANALYTICS ENGINE
+    // ============================================
+    const ANALYTICS_KEY = 'shkrebko_analytics';
+    const ANALYTICS_PASS = 'admin2026';
 
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
+    // Link registry — label for each tracked URL
+    const LINK_LABELS = {
+        'https://www.pmebusiness.com/registrationv2?TP=22001398': '🤝 Стать партнёром (Hero)',
+        'https://www.fitline.com/?sponsor=22001398': '🛒 Смотреть продукцию (FitLine)',
+        'https://instagram.com/Mikhail_shk': '📸 Instagram Михаила',
+        'https://t.me/Mikhail_shk': '✈️ Telegram Михаила',
+        'https://instagram.com/Dina_Shkrebko': '📸 Instagram Дины',
+        'https://t.me/Dina_shkrebko': '✈️ Telegram Дины',
+        '#business-partner': '🤝 Стать партнёром (Карточка)',
+        '#contact': '💬 Связаться с нами',
+    };
 
-            fadeElements.forEach(el => observer.observe(el));
+    function loadData() {
+        try {
+            return JSON.parse(localStorage.getItem(ANALYTICS_KEY)) || { visits: [], links: {} };
+        } catch { return { visits: [], links: {} }; }
+    }
 
-            // Плавный скролл для якорных ссылок
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
+    function saveData(d) {
+        localStorage.setItem(ANALYTICS_KEY, JSON.stringify(d));
+    }
+
+    function todayStr() {
+        return new Date().toISOString().slice(0, 10);
+    }
+
+    // Track page visit
+    function trackVisit() {
+        const d = loadData();
+        const today = todayStr();
+        const existing = d.visits.find(v => v.date === today);
+        if (existing) {
+            existing.count++;
+        } else {
+            d.visits.push({ date: today, count: 1 });
+            // keep last 60 days only
+            if (d.visits.length > 60) d.visits.shift();
+        }
+        saveData(d);
+    }
+
+    // Track link click
+    function trackLink(url) {
+        const d = loadData();
+        d.links[url] = (d.links[url] || 0) + 1;
+        saveData(d);
+    }
+
+    // Reset
+    function resetAnalytics() {
+        localStorage.removeItem(ANALYTICS_KEY);
+        renderAnalytics();
+    }
+
+    // ============================================
+    // RENDER DASHBOARD
+    // ============================================
+    function renderAnalytics() {
+        const d = loadData();
+
+        // Summary cards
+        const totalVisits = d.visits.reduce((s, v) => s + v.count, 0);
+        const todayVisits = (d.visits.find(v => v.date === todayStr()) || {}).count || 0;
+        const totalClicks = Object.values(d.links).reduce((s, v) => s + v, 0);
+
+        document.getElementById('stats-summary').innerHTML = `
+            ${statCard('👁 Всего посещений', totalVisits, '#E8C547')}
+            ${statCard('📅 Сегодня', todayVisits, '#6ECFE8')}
+            ${statCard('🔗 Кликов по ссылкам', totalClicks, '#7EE87A')}
+        `;
+
+        // Links table
+        const allLinks = { ...d.links };
+        // Ensure all known links appear even with 0 clicks
+        Object.keys(LINK_LABELS).forEach(k => { if (!(k in allLinks)) allLinks[k] = 0; });
+        const sorted = Object.entries(allLinks).sort((a, b) => b[1] - a[1]);
+        const maxClicks = sorted[0]?.[1] || 1;
+
+        document.getElementById('links-table').innerHTML = sorted.map(([url, count]) => {
+            const label = LINK_LABELS[url] || url;
+            const pct = Math.round((count / maxClicks) * 100);
+            return `
+                <div style="margin-bottom:0.85rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+                        <span style="color:#ccc; font-size:0.9rem;">${label}</span>
+                        <span style="color:#E8C547; font-weight:600; font-size:0.95rem; min-width:30px; text-align:right;">${count}</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.06); border-radius:4px; height:6px; overflow:hidden;">
+                        <div style="width:${pct}%; height:100%; background:linear-gradient(90deg,#E8C547,#C9A962); border-radius:4px; transition:width 0.6s ease;"></div>
+                    </div>
+                </div>`;
+        }).join('');
+
+        // Daily chart
+        const last14 = d.visits.slice(-14);
+        if (last14.length === 0) {
+            document.getElementById('daily-chart').innerHTML = '<p style="color:#666; font-size:0.9rem;">Пока нет данных</p>';
+        } else {
+            const maxDay = Math.max(...last14.map(v => v.count)) || 1;
+            document.getElementById('daily-chart').innerHTML = `
+                <div style="display:flex; align-items:flex-end; gap:6px; height:120px; padding-bottom:2rem; position:relative;">
+                    ${last14.map(v => {
+                        const h = Math.round((v.count / maxDay) * 90);
+                        const shortDate = v.date.slice(5); // MM-DD
+                        return `
+                            <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; min-width:28px;">
+                                <span style="color:#E8C547; font-size:0.7rem; font-weight:600;">${v.count}</span>
+                                <div style="width:100%; height:${h}px; background:linear-gradient(180deg,#E8C547,#C9A962); border-radius:4px 4px 0 0;"></div>
+                                <span style="color:#666; font-size:0.65rem; position:absolute; bottom:0;">${shortDate}</span>
+                            </div>`;
+                    }).join('')}
+                </div>`;
+        }
+    }
+
+    function statCard(label, value, color) {
+        return `<div style="background:#1E1E1E; border-radius:12px; padding:1.2rem; border:1px solid rgba(255,255,255,0.07); text-align:center;">
+            <div style="font-size:2rem; font-weight:700; color:${color}; font-family:'Playfair Display',serif;">${value}</div>
+            <div style="color:#888; font-size:0.85rem; margin-top:0.3rem;">${label}</div>
+        </div>`;
+    }
+
+    function openAnalytics() {
+        const pass = prompt('Введите пароль для аналитики:');
+        if (pass === ANALYTICS_PASS) {
+            renderAnalytics();
+            document.getElementById('analytics-overlay').style.display = 'block';
+        } else if (pass !== null) {
+            alert('Неверный пароль');
+        }
+    }
+
+    function closeAnalytics() {
+        document.getElementById('analytics-overlay').style.display = 'none';
+    }
+
+    // ============================================
+    // MAIN INIT
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Track this visit
+        trackVisit();
+
+        // ---- GA4 + localStorage click tracking ----
+        // Описания для GA4-событий
+        const GA4_LABELS = {
+            'https://www.pmebusiness.com/registrationv2?TP=22001398': { event: 'click_partner_hero',    label: 'Стать партнёром (Hero)' },
+            'https://www.fitline.com/?sponsor=22001398':              { event: 'click_fitline_products', label: 'Смотреть продукцию (FitLine)' },
+            'https://instagram.com/Mikhail_shk':                      { event: 'click_instagram_mikhail', label: 'Instagram Михаила' },
+            'https://t.me/Mikhail_shk':                               { event: 'click_telegram_mikhail',  label: 'Telegram Михаила' },
+            'https://instagram.com/Dina_Shkrebko':                    { event: 'click_instagram_dina',   label: 'Instagram Дины' },
+            'https://t.me/Dina_shkrebko':                             { event: 'click_telegram_dina',    label: 'Telegram Дины' },
+        };
+
+        document.querySelectorAll('a[href^="http"]').forEach(link => {
+            link.addEventListener('click', function() {
+                const href = this.getAttribute('href');
+                // localStorage tracking
+                trackLink(href);
+                // GA4 event
+                const meta = GA4_LABELS[href];
+                if (meta && typeof gtag !== 'undefined') {
+                    gtag('event', meta.event, {
+                        event_category: 'outbound_link',
+                        event_label: meta.label,
+                        link_url: href
+                    });
+                }
+            });
+        });
+
+        // Отслеживание кнопки "Стать партнёром" в карточке (отдельно от Hero)
+        document.querySelectorAll('a.about__card-link').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href === 'https://www.pmebusiness.com/registrationv2?TP=22001398') {
+                link.addEventListener('click', function() {
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'click_partner_card', {
+                            event_category: 'outbound_link',
+                            event_label: 'Стать партнёром (Карточка)',
+                            link_url: href
                         });
                     }
                 });
-            });
-
-            // Параллакс эффект для изображений
-            const imageWrappers = document.querySelectorAll('.hero__images, .family__images');
-            
-            window.addEventListener('scroll', function() {
-                const scrollY = window.pageYOffset;
-                
-                imageWrappers.forEach(wrapper => {
-                    const rect = wrapper.getBoundingClientRect();
-                    const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-                    
-                    if (isVisible) {
-                        const offset = (scrollY - wrapper.offsetTop) * 0.05;
-                        wrapper.style.transform = `translateY(${offset * 0.1}px)`;
+            }
+            if (href === '#contact') {
+                link.addEventListener('click', function() {
+                    trackLink('#contact');
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'click_contact', {
+                            event_category: 'internal_link',
+                            event_label: 'Связаться с нами'
+                        });
                     }
                 });
+            }
+        });
+
+        // Secret analytics trigger: triple-click on footer copyright
+        let clickCount = 0, clickTimer;
+        document.querySelector('.footer').addEventListener('click', function() {
+            clickCount++;
+            clearTimeout(clickTimer);
+            clickTimer = setTimeout(() => { clickCount = 0; }, 800);
+            if (clickCount >= 3) {
+                clickCount = 0;
+                openAnalytics();
+            }
+        });
+
+        // Keyboard shortcut: Ctrl+Shift+A
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                openAnalytics();
+            }
+        });
+
+        // ---- Scroll animations ----
+        const fadeElements = document.querySelectorAll('.fade-in');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { root: null, rootMargin: '0px', threshold: 0.1 });
+        fadeElements.forEach(el => observer.observe(el));
+
+        // ---- Smooth scroll for anchor links ----
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         });
+
+        // ---- Parallax ----
+        const imageWrappers = document.querySelectorAll('.hero__images, .family__images');
+        window.addEventListener('scroll', function() {
+            const scrollY = window.pageYOffset;
+            imageWrappers.forEach(wrapper => {
+                const rect = wrapper.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    const offset = (scrollY - wrapper.offsetTop) * 0.05;
+                    wrapper.style.transform = `translateY(${offset * 0.1}px)`;
+                }
+            });
+        });
+    });
     </script>
 </body>
 </html>
